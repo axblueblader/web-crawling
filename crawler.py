@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import requests
 import os
+from document import Document
 
 def is_url(url):
   try:
@@ -76,18 +77,23 @@ def scrape_web(url,max_level):
     top_freq_tag = sorted_tags_freq[0][0]
     i = 0
     file_dir = os.path.dirname(os.path.abspath(__file__))
+    documents = set()
     for soup in soups_set:
+        
         file_name = f"files/{i}.txt"
         file_path = os.path.join(file_dir,file_name)
+        file_path = os.path.abspath(os.path.realpath(file_path))
+
         f = open(file_path,"w+")
         for ele in soup.find_all(top_freq_tag):
             if not is_empty(ele.string):
                 f.write(ele.string.strip()+"\r\n")
+                documents.add(Document(i,ele.string.strip()))
         f.close() 
         i += 1
-    return len(soups_set)
+    return len(soups_set),documents
 
 if __name__ == "__main__":
     url = "https://vnexpress.net/"
-    links_count = scrape_web(url,1)
+    links_count,documents = scrape_web(url,1)
     print("Number of links scraped: ",links_count)
