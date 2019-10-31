@@ -54,17 +54,29 @@ def sorted_tags_descending(tags_freq):
 
 def scrape_web(url,max_level):
     print("Scraping: ",url,", max recursive level:",max_level)
-    cur_level = 1
+    print("This might take a while")
+    cur_level = 0
     links = {url}
     visited = set()
     tags_freq = {}
     soups_set = set()
+    max_retry = 3
 
-    while (cur_level < max_level+1):
+    while (cur_level <= max_level):
         new_links = set()
         for link in links:
             visited.add(link)
-            doc = requests.get(link)
+            retry = 0
+            doc = None
+            while(retry < max_retry):
+                try:
+                    doc = requests.get(link)
+                    break
+                except:
+                    retry +=1
+            if (doc is None):
+                print("Connection to {link} failed")
+                break
             soup = BeautifulSoup(doc.content,"html5lib")
             soups_set.add(soup)
             new_links = get_new_links(soup,new_links,visited)
@@ -77,7 +89,7 @@ def scrape_web(url,max_level):
     top_freq_tag = sorted_tags_freq[0][0]
     i = 0
     file_dir = os.path.dirname(os.path.abspath(__file__))
-    documents = set()
+    documents = {}
     for soup in soups_set:
         
         file_name = f"files/{i}.txt"
@@ -88,12 +100,18 @@ def scrape_web(url,max_level):
         for ele in soup.find_all(top_freq_tag):
             if not is_empty(ele.string):
                 f.write(ele.string.strip()+"\r\n")
-                documents.add(Document(i,ele.string.strip()))
+                if (i in documents):
+                    tmp = documents[i] + ele.string.strip() + "\r\n"
+                else:
+                    tmp = ele.string.strip() + "\r\n"
+                documents[i] = tmp
         f.close() 
         i += 1
     return len(soups_set),documents
 
 if __name__ == "__main__":
     url = "https://vnexpress.net/"
-    links_count,documents = scrape_web(url,1)
+    links_count,documents = scrape_web(url,0)
     print("Number of links scraped: ",links_count)
+    for key in documents:
+        print(key,documents[key])

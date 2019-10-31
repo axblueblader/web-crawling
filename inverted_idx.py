@@ -18,19 +18,18 @@ class InvertedIndex:
 
 def gen_inverted_idx(documents):
     inverted_idx = {}
-    documents = sorted(documents, key = lambda x : x.id)
-    for doc in documents:
-        terms = tokenizer.tokenize(doc)
+    for key in sorted(documents):
+        terms = tokenizer.termize_doc(documents[key])
         for term in terms:
             if (not (term in inverted_idx)):
                 inverted_idx[term] = InvertedIndex()
-            inverted_idx[term].add_new_posting(doc.id)
+            inverted_idx[term].add_new_posting(key)
 
     return inverted_idx
 
                 
 
 if __name__ == "__main__":
-    result = gen_inverted_idx({Document(1,"abc xyz"),Document(2,"qwe abc xyz"),Document(3,"qwe"),Document(4,"xyz")})
+    result = gen_inverted_idx({1:"abc xyz",2:"qwe abc xyz",3:"qwe",4:"xyz"})
     for item in result:
         print(item,result[item].freq,result[item].postings)
