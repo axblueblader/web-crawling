@@ -1,4 +1,3 @@
-from document import Document
 import tokenizer
 
 class InvertedIndex:

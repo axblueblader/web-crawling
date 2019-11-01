@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import requests
 import os
-from document import Document
 
 def is_url(url):
   try:
@@ -40,17 +39,29 @@ def is_empty(string):
 
 def count_content_tags(soup,tags_freq):
     black_list_tags = ["script","style"]
-    for tag in soup.find_all():
-        text = tag.string
-        if (not is_empty(text) and not (tag.name in black_list_tags)):
-            if (tag.name in tags_freq):
-                tags_freq[tag.name] += 1
+    for ele in soup.find_all():
+        text = ele.string
+        if (not is_empty(text) and not (ele.name in black_list_tags)):
+            if (ele.name in tags_freq):
+                tags_freq[ele.name] += 1
             else:
-                tags_freq[tag.name] = 1
+                tags_freq[ele.name] = 1
     return tags_freq
 
-def sorted_tags_descending(tags_freq):
-    return sorted(tags_freq.items(), key = lambda x : x[1],reverse=True)
+def count_content_classes(soup, classes_freq):
+    black_list_tags = ["script","style"]
+    for ele in soup.find_all(class_=True):
+        text = ele.string
+        if (not is_empty(text) and not (ele.name in black_list_tags)):
+            for clazz in ele["class"]:
+                if (clazz in classes_freq):
+                    classes_freq[clazz] += 1
+                else:
+                    classes_freq[clazz] = 1
+    return classes_freq
+
+def sorted_descending(dict_var):
+    return sorted(dict_var.items(), key = lambda x : x[1],reverse=True)
 
 def scrape_web(url,max_level):
     print("Scraping: ",url,", max recursive level:",max_level)
@@ -59,6 +70,7 @@ def scrape_web(url,max_level):
     links = {url}
     visited = set()
     tags_freq = {}
+    class_freq = {}
     soups_set = set()
     max_retry = 3
 
@@ -81,10 +93,13 @@ def scrape_web(url,max_level):
             soups_set.add(soup)
             new_links = get_new_links(soup,new_links,visited)
             tags_freq = count_content_tags(soup,tags_freq)
+            class_freq = count_content_classes(soup,class_freq)
         links = new_links
         cur_level = cur_level + 1
-    sorted_tags_freq = sorted_tags_descending(tags_freq)
-    print(sorted_tags_freq)
+    sorted_tags_freq = sorted_descending(tags_freq)
+    sorted_class_freq = sorted_descending(class_freq)
+    print("Sorted tags frequency: ",sorted_tags_freq)
+    print("Sorted classes frequency: ",sorted_class_freq)
     
     top_freq_tag = sorted_tags_freq[0][0]
     i = 0

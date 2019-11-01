@@ -1,6 +1,5 @@
 import tokenizer
 import inverted_idx
-from document import Document
 
 class BooleanModel:
     def __init__(self,docs):

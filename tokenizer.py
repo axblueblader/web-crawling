@@ -1,5 +1,3 @@
-from document import Document
-
 def termize_doc(doc):
     tokens = set()
     for token in doc.lower().split():
@@ -15,5 +13,5 @@ def tokenize_str(str):
     return tokens
 
 if __name__ == "__main__":
-    tokens = termize_doc(Document(1,"abc xyz"))
+    tokens = termize_doc("abc xyz")
     print("Tokens set: ",tokens)
