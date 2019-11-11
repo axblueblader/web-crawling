@@ -1,10 +1,13 @@
 # CS419 - Infomation Retrieval
 
+# Web crawling and model assignments
+
 Nguyen Quoc Viet - 1651069
 
 ## Requirements
 
 - numpy
+- python 3
 
 ```
 pip3 install numpy
@@ -41,6 +44,7 @@ File: boolean_model.py
 Usage:
 
 - Run boolean_model.py or provide documents from web scraper to initialized and use **retrieve** to get results from query
+- Usable operators: and, or, not
 
 ```python
 import scraper
@@ -50,3 +54,25 @@ links_count,documents = scraper.scrape_web(url,1)
 model = BooleanModel(documents)
 res = model.retrieve(query)
 ```
+
+- Example query: "việt and nam not mỹ"
+
+## Vector Model
+
+File: vector_model.py
+
+Usage:
+
+- Run vector_model.py or provide documents from web scraper to initialized and use **retrieve** to get results ranking from query
+- Input: list of keywords seperated by space
+
+```python
+import scraper
+from vector_model import VectorModel
+url = "https://vnexpress.net/"
+links_count,documents = scraper.scrape_web(url,1)
+model = VectorModel(documents)
+res = model.retrieve(query)
+```
+
+- Example query: "việt nam"
