@@ -98,8 +98,8 @@ def scrape_web(url,max_level):
         cur_level = cur_level + 1
     sorted_tags_freq = sorted_descending(tags_freq)
     sorted_class_freq = sorted_descending(class_freq)
-    print("Sorted tags frequency: ",sorted_tags_freq)
-    print("Sorted classes frequency: ",sorted_class_freq)
+    # print("Sorted tags frequency: ",sorted_tags_freq)
+    # print("Sorted classes frequency: ",sorted_class_freq)
     
     top_freq_tag = sorted_tags_freq[0][0]
     i = 0
