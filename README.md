@@ -76,3 +76,7 @@ res = model.retrieve(query)
 ```
 
 - Example query: "việt nam"
+
+## All together
+
+- Run main.py to run everything together. By default, it will scrape https://vnexpress.net/ , with recursive level 1, store all contents in the most frequently use HTML tag on a page as one document. User can then input queries, and results from both Boolean Model and Vector Model will be shown.
